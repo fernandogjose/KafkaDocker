@@ -1,9 +1,0 @@
-services:
-  kafka.receive:
-    build:
-      context: C:\MeusProjetos\Estudo\Kafka
-      dockerfile: Src/Kafka.Receive/Dockerfile
-    image: kafkareceive
-    volumes:
-    - C:\Users\ferna\AppData\Roaming\Microsoft\UserSecrets:/root/.microsoft/usersecrets:ro
-version: '3.4'
