@@ -220,7 +220,7 @@ project.lock.json
 *.feature.xlsx.*
 *.Specs_*.html
 
-
+**/.vs/Kafka/v16/.suo
 #####
 # End of core ignore list, below put you custom 'per project' settings (patterns or path)
 #####
