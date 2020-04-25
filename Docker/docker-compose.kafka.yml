@@ -31,10 +31,29 @@ services:
         container_name: kafka_receive
         ports: 
             - "10000:10000"
+        environment:
+            - ASPNETCORE_URLS=http://+:10000
         restart: always
         build:
             context: ../
             dockerfile: Src/Kafka.Receive/Dockerfile
+        depends_on:
+            - zookeeper
+            - kafka
+        networks: 
+            - kafka_default
+
+    kafka.sender:
+        image: ${DOCKER_REGISTRY-}kafkasender
+        container_name: kafka_sender
+        ports: 
+            - "8000:8000"
+        environment:
+            - ASPNETCORE_URLS=http://+:8000
+        restart: always
+        build:
+            context: ../
+            dockerfile: Src/Kafka.Sender/Dockerfile
         depends_on:
             - zookeeper
             - kafka
