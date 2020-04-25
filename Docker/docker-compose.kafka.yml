@@ -33,6 +33,7 @@ services:
             - "10000:10000"
         environment:
             - ASPNETCORE_URLS=http://+:10000
+            - WEBSITE_TIME_ZONE=E. South America Standard Time
         restart: always
         build:
             context: ../
@@ -48,8 +49,10 @@ services:
         container_name: kafka_sender
         ports: 
             - "8000:8000"
+            - "8001:8001"
         environment:
             - ASPNETCORE_URLS=http://+:8000
+            - WEBSITE_TIME_ZONE=E. South America Standard Time
         restart: always
         build:
             context: ../
