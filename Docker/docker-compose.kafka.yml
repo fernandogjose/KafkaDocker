@@ -1,0 +1,47 @@
+version: '3.7'
+services:
+    zookeeper:
+        image: wurstmeister/zookeeper
+        ports:
+            - "2181:2181"
+        networks: 
+            - kafka_default
+            
+    kafka:
+        image: wurstmeister/kafka
+        ports:
+            - "9092:9092"
+            - "9093:9093"
+        environment:
+            KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9093,OUTSIDE://localhost:9092
+            KAFKA_LISTENERS: INSIDE://0.0.0.0:9093,OUTSIDE://0.0.0.0:9092
+            KAFKA_CREATE_TOPICS: "fila_pedido:1:1"
+            KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+            KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+            KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        depends_on:
+            - zookeeper
+        networks: 
+            - kafka_default
+    
+    kafka.receive:
+        image: ${DOCKER_REGISTRY-}kafkareceive
+        container_name: kafka_receive
+        ports: 
+            - "10000:10000"
+        restart: always
+        build:
+            context: ../
+            dockerfile: Src/Kafka.Receive/Dockerfile
+        depends_on:
+            - zookeeper
+            - kafka
+        networks: 
+            - kafka_default
+
+networks:
+    kafka_default:
+      name: kafka_default
+      driver: bridge
