@@ -13,12 +13,12 @@ namespace Kafka.Sender.Controllers
         [ProducesResponseType(typeof(string), 201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public IActionResult Post([FromBody] Email request)
+        public IActionResult Post([FromBody] CartaoDeCreditoRequest request)
         {
             return Ok(SendMessageByKafka(request));
         }
 
-        private string SendMessageByKafka(Email request)
+        private string SendMessageByKafka(CartaoDeCreditoRequest request)
         {
             var config = new ProducerConfig { BootstrapServers = "kafka:9093" };
 
@@ -26,7 +26,7 @@ namespace Kafka.Sender.Controllers
             {
                 try
                 {
-                    var sendResult = producer.ProduceAsync("fila_pedido", new Message<Null, string> { Value = JsonConvert.SerializeObject(request) }).GetAwaiter().GetResult();
+                    var sendResult = producer.ProduceAsync("fila_pagamento_cartao", new Message<Null, string> { Value = JsonConvert.SerializeObject(request) }).GetAwaiter().GetResult();
                     return $"Mensagem '{sendResult.Value}' de '{sendResult.TopicPartitionOffset}'";
                 }
                 catch (ProduceException<Null, string> e)
@@ -40,9 +40,11 @@ namespace Kafka.Sender.Controllers
     }
 }
 
-public class Email
+public class CartaoDeCreditoRequest
 {
-    public string Subject { get; set; }
+    public string Bandeira { get; set; }
 
-    public string Body { get; set; }
+    public string Nome { get; set; }
+
+    public string Numero { get; set; }
 }
